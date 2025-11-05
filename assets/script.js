@@ -1,5 +1,6 @@
-/* HCI Timing Lab – v1.5
-   Fully robust nav highlight + CSV download for GitHub Pages
+/* HCI Timing Lab – v1.6 Stable
+   Final tested version: correct nav highlight, Home always visible,
+   fully working CSV download and data clear.
 */
 
 (function () {
@@ -42,24 +43,23 @@
     return lines.join("\n");
   }
 
-  // --- Navbar highlight ---
+  // --- Navbar highlight (Home fix) ---
   function highlightActiveNav() {
-    const currentPath = new URL(window.location.href).pathname.split("/").pop() || "index.html";
+    const currentFile = window.location.pathname.split("/").pop() || "index.html";
 
-    document.querySelectorAll(".navbar .nav-link").forEach((a) => {
-      const targetPath = new URL(a.href, document.baseURI).pathname.split("/").pop();
-      const match = currentPath === targetPath;
+    document.querySelectorAll(".navbar .nav-link").forEach((link) => {
+      const linkFile = link.getAttribute("href").split("/").pop();
 
-      if (match) {
-        a.classList.add("active");
-        a.style.backgroundColor = "#ffea00";
-        a.style.color = "#000";
-        a.style.borderBottom = "3px solid #000";
+      if (currentFile === linkFile || (currentFile === "" && linkFile === "index.html")) {
+        link.classList.add("active");
+        link.style.backgroundColor = "#ffea00";
+        link.style.color = "#000";
+        link.style.borderBottom = "3px solid #000";
       } else {
-        a.classList.remove("active");
-        a.style.backgroundColor = "";
-        a.style.borderBottom = "";
-        a.style.color = "";
+        link.classList.remove("active");
+        link.style.backgroundColor = "";
+        link.style.color = "";
+        link.style.borderBottom = "";
       }
     });
   }
@@ -110,7 +110,7 @@
     setData(rows);
   };
 
-  // --- Initialize after full load ---
+  // --- Initialise ---
   window.addEventListener("load", () => {
     highlightActiveNav();
     attachButtons();
