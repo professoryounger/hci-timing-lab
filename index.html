@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>HCI Timing Lab v1.6</title>
+    <title>HCI Timing Lab v1.5</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -27,26 +27,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarsExample">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="index.html">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="reaction.html">Reaction Time</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="delay.html">Perceived Delay</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="progress.html">Progress Illusion</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="reaction.html">Reaction Time</a></li>
+            <li class="nav-item"><a class="nav-link" href="delay.html">Perceived Delay</a></li>
+            <li class="nav-item"><a class="nav-link" href="progress.html">Progress Illusion</a></li>
           </ul>
           <div class="d-flex">
-            <button id="downloadBtn" class="btn btn-outline-light btn-sm me-2">
-              Download CSV
-            </button>
-            <button id="clearBtn" class="btn btn-outline-warning btn-sm">
-              Clear Data
-            </button>
+            <button id="downloadBtn" class="btn btn-outline-light btn-sm me-2">Download CSV</button>
+            <button id="clearBtn" class="btn btn-outline-warning btn-sm">Clear Data</button>
           </div>
         </div>
       </div>
@@ -57,8 +45,7 @@
         <div class="col-lg-8">
           <h1 class="mb-3">HCI Timing Lab</h1>
           <p class="lead">
-            A trio of quick experiments for Chapter 13: The Timely User
-            Experience.
+            A trio of quick experiments for Chapter 13: The Timely User Experience.
           </p>
           <ol>
             <li><strong>Reaction Time:</strong> Click when the panel turns green.</li>
@@ -66,58 +53,17 @@
             <li><strong>Progress Illusion:</strong> Same 1 s duration, different pacing. Which feels fastest?</li>
           </ol>
           <p class="text-muted">
-            Results are stored locally in your browser until cleared. Use the
-            navbar buttons to download CSV for analysis.
+            Results are stored locally in your browser until cleared. Use the navbar buttons to download CSV for analysis.
           </p>
           <hr />
           <p class="fw-bold text-success">
-            v1.6 – Includes fake loading modal demonstration.
+            v1.5 – Final verified version with working CSV + bright highlight.
           </p>
         </div>
       </div>
     </main>
 
-    <!-- Fake Loading Modal -->
-    <div
-      id="fakeLoader"
-      class="position-fixed top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center bg-dark text-light"
-      style="z-index:2000;"
-    >
-      <img
-        src="assets/loading.gif"
-        alt="Loading..."
-        width="80"
-        height="80"
-        class="mb-4"
-      />
-      <h5 id="fakeText" class="mb-3">Loading site...</h5>
-      <button id="continueBtn" class="btn btn-warning d-none">Continue</button>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/script.js"></script>
-
-    <script>
-      // --- Fake loading sequence ---
-      window.addEventListener("load", () => {
-        const loader = document.getElementById("fakeLoader");
-        const msg = document.getElementById("fakeText");
-        const btn = document.getElementById("continueBtn");
-
-        // After 10 s show the "Not really…" message and Continue button
-        setTimeout(() => {
-          msg.textContent =
-            "Not really... some sites fake loading to imply complexity.";
-          btn.classList.remove("d-none");
-        }, 10000);
-
-        // Fade out on click
-        btn.addEventListener("click", () => {
-          loader.style.transition = "opacity 1s ease";
-          loader.style.opacity = "0";
-          setTimeout(() => (loader.style.display = "none"), 1000);
-        });
-      });
-    </script>
   </body>
 </html>
