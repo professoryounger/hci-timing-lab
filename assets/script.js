@@ -1,6 +1,6 @@
-/* HCI Timing Lab – v1.2
-   Fixes CSV download (works on GitHub Pages)
-   Adds bright active-page highlight for navbar
+/* HCI Timing Lab – v1.3
+   Fixes GitHub Pages subfolder paths + guaranteed CSV download
+   Bright active-page highlight retained
 */
 
 (function () {
@@ -44,10 +44,10 @@
 
   function highlightActiveNav() {
     const path = window.location.pathname;
-    const current = path.split('/').pop() || 'index.html';
+    const filename = path.split('/').pop() || 'index.html';
     document.querySelectorAll('.navbar .nav-link').forEach((a) => {
       const href = a.getAttribute('href');
-      if (href === current) {
+      if (path.endsWith(href) || filename === href) {
         a.classList.add('active');
         a.style.backgroundColor = '#ffea00';
         a.style.color = '#000';
@@ -67,7 +67,7 @@
     const dl = document.getElementById('downloadBtn');
     const clr = document.getElementById('clearBtn');
     if (dl) {
-      dl.addEventListener('click', function () {
+      dl.onclick = function () {
         const rows = getData();
         if (!rows.length) {
           alert('No data to download yet. Run an experiment first.');
@@ -81,22 +81,24 @@
         a.download = 'hci_timing_data.csv';
         document.body.appendChild(a);
         a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          a.remove();
+        }, 100);
         alert('✅ CSV downloaded successfully.');
-      });
+      };
     }
     if (clr) {
-      clr.addEventListener('click', function () {
+      clr.onclick = function () {
         if (confirm('Clear all locally stored experiment data?')) {
           localStorage.removeItem(KEY);
           alert('Data cleared.');
         }
-      });
+      };
     }
   }
 
-  // Public logger
+  // Public logging function
   window.hciLog = function (entry) {
     const now = new Date().toISOString();
     const rows = getData();
@@ -104,9 +106,11 @@
     setData(rows);
   };
 
-  // Wait until window load (fixes GH Pages timing)
-  window.addEventListener('load', function () {
-    highlightActiveNav();
-    attachButtons();
+  // Wait for DOM ready + slight delay for GH Pages load quirks
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(() => {
+      highlightActiveNav();
+      attachButtons();
+    }, 200);
   });
 })();
