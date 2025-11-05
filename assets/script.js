@@ -1,6 +1,6 @@
-/* HCI Timing Lab – v1.6 Stable
-   Final tested version: correct nav highlight, Home always visible,
-   fully working CSV download and data clear.
+/* HCI Timing Lab – v1.7 Stable
+   Fixes disappearing Home link, correct nav highlighting,
+   working CSV download + clear data buttons.
 */
 
 (function () {
@@ -45,12 +45,24 @@
 
   // --- Navbar highlight (Home fix) ---
   function highlightActiveNav() {
-    const currentFile = window.location.pathname.split("/").pop() || "index.html";
+    const currentURL = new URL(window.location.href);
+    const currentFile = currentURL.pathname.split("/").pop() || "index.html";
 
     document.querySelectorAll(".navbar .nav-link").forEach((link) => {
-      const linkFile = link.getAttribute("href").split("/").pop();
+      const linkURL = new URL(link.href, document.baseURI);
+      const linkFile = linkURL.pathname.split("/").pop();
 
-      if (currentFile === linkFile || (currentFile === "" && linkFile === "index.html")) {
+      const isMatch =
+        currentFile === linkFile ||
+        (currentFile === "" && linkFile === "index.html");
+
+      // Always keep Home visible
+      if (linkFile === "index.html") {
+        link.classList.remove("d-none");
+        link.style.display = "inline-block";
+      }
+
+      if (isMatch) {
         link.classList.add("active");
         link.style.backgroundColor = "#ffea00";
         link.style.color = "#000";
