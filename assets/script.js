@@ -1,6 +1,6 @@
-/* HCI Timing Lab – v1.7 Stable
-   Fixes disappearing Home link, correct nav highlighting,
-   working CSV download + clear data buttons.
+/* HCI Timing Lab – v1.8
+   Fixes disappearing Home link in Bootstrap collapses and GitHub reloads.
+   Ensures nav always restores correctly across pages.
 */
 
 (function () {
@@ -43,7 +43,7 @@
     return lines.join("\n");
   }
 
-  // --- Navbar highlight (Home fix) ---
+  // --- Navbar highlight (forced visibility) ---
   function highlightActiveNav() {
     const currentURL = new URL(window.location.href);
     const currentFile = currentURL.pathname.split("/").pop() || "index.html";
@@ -51,15 +51,16 @@
     document.querySelectorAll(".navbar .nav-link").forEach((link) => {
       const linkURL = new URL(link.href, document.baseURI);
       const linkFile = linkURL.pathname.split("/").pop();
-
       const isMatch =
         currentFile === linkFile ||
         (currentFile === "" && linkFile === "index.html");
 
-      // Always keep Home visible
+      // Force Home visibility no matter what Bootstrap does
       if (linkFile === "index.html") {
         link.classList.remove("d-none");
         link.style.display = "inline-block";
+        link.closest("li").style.display = "inline-block";
+        link.closest("li").classList.remove("d-none");
       }
 
       if (isMatch) {
@@ -114,7 +115,7 @@
     }
   }
 
-  // --- Public log ---
+  // --- Public logger ---
   window.hciLog = function (entry) {
     const now = new Date().toISOString();
     const rows = getData();
@@ -122,9 +123,18 @@
     setData(rows);
   };
 
-  // --- Initialise ---
+  // --- Initialise and monitor navbar collapse events ---
   window.addEventListener("load", () => {
     highlightActiveNav();
     attachButtons();
+
+    // Watch for Bootstrap collapse closing/opening
+    document.querySelectorAll(".navbar-collapse").forEach((nav) => {
+      nav.addEventListener("hidden.bs.collapse", highlightActiveNav);
+      nav.addEventListener("shown.bs.collapse", highlightActiveNav);
+    });
+
+    // Occasionally re-enforce Home link visibility (for GH page reload flicker)
+    setTimeout(highlightActiveNav, 500);
   });
 })();
