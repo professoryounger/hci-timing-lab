@@ -1,11 +1,11 @@
-/* HCI Timing Lab – v1.4
-   Robust GH Pages support, fixed nav highlight + guaranteed CSV download
+/* HCI Timing Lab – v1.5
+   Fully robust nav highlight + CSV download for GitHub Pages
 */
 
 (function () {
   const KEY = "hciTimingData";
 
-  // ---- LocalStorage helpers ----
+  // --- Local data helpers ---
   function getData() {
     try {
       const raw = localStorage.getItem(KEY);
@@ -42,28 +42,29 @@
     return lines.join("\n");
   }
 
-  // ---- Highlight active menu ----
+  // --- Navbar highlight ---
   function highlightActiveNav() {
-    const current = window.location.href;
+    const currentPath = new URL(window.location.href).pathname.split("/").pop() || "index.html";
+
     document.querySelectorAll(".navbar .nav-link").forEach((a) => {
-      const abs = new URL(a.getAttribute("href"), document.baseURI).href;
-      if (current === abs || current.startsWith(abs)) {
+      const targetPath = new URL(a.href, document.baseURI).pathname.split("/").pop();
+      const match = currentPath === targetPath;
+
+      if (match) {
         a.classList.add("active");
         a.style.backgroundColor = "#ffea00";
         a.style.color = "#000";
-        a.style.textDecoration = "underline";
-        a.setAttribute("aria-current", "page");
+        a.style.borderBottom = "3px solid #000";
       } else {
         a.classList.remove("active");
-        a.removeAttribute("aria-current");
         a.style.backgroundColor = "";
-        a.style.textDecoration = "";
+        a.style.borderBottom = "";
         a.style.color = "";
       }
     });
   }
 
-  // ---- Button wiring ----
+  // --- Buttons ---
   function attachButtons() {
     const dl = document.getElementById("downloadBtn");
     const clr = document.getElementById("clearBtn");
@@ -77,16 +78,16 @@
         }
         const csv = toCSV(rows);
         const blob = new Blob([csv], { type: "text/csv" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "hci_timing_data.csv";
-        document.body.appendChild(a);
-        // direct user event chain avoids popup blockers
-        a.click();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "hci_timing_data.csv";
+        document.body.appendChild(link);
+        link.click();
         setTimeout(() => {
-          URL.revokeObjectURL(a.href);
-          a.remove();
-        }, 500);
+          URL.revokeObjectURL(url);
+          link.remove();
+        }, 1000);
         alert("✅ CSV downloaded successfully.");
       };
     }
@@ -101,7 +102,7 @@
     }
   }
 
-  // ---- Public logger ----
+  // --- Public log ---
   window.hciLog = function (entry) {
     const now = new Date().toISOString();
     const rows = getData();
@@ -109,7 +110,7 @@
     setData(rows);
   };
 
-  // ---- Init after full load ----
+  // --- Initialize after full load ---
   window.addEventListener("load", () => {
     highlightActiveNav();
     attachButtons();
